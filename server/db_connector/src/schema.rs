@@ -5,7 +5,7 @@ diesel::table! {
         username -> Text,
         name -> Text,
         password -> Text,
-        private_key -> Nullable<Text>,
-        public_key -> Nullable<Text>,
+        private_key -> Text,
+        public_key -> Text,
     }
 }
