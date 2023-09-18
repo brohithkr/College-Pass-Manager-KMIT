@@ -5,4 +5,4 @@ edition = "2021"
 
 [dependencies]
 base64 = "0.21.3"
-openssl = { version = "0.10.57", features = ["vendored"] }
+openssl = { version = "0.10.57" }
