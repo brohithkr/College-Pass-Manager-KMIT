@@ -1,12 +1,12 @@
 import {Database} from "bun:sqlite";
 import { expect } from "bun:test";
 
-// import {Verifier} from "./types.ts";
+import {Result} from "./types.ts";
 
 // var db_path = (process.env.DOCKER) ? "DB/data.db" : "/DB/data.db";
 var db_path = "DB/data.db";
 
-function initialize_db() {
+function initialize_db(table: string) {
     const db = new Database(db_path, {create: true});
     let schema: any = {
         "Verifier": `
@@ -24,16 +24,13 @@ function initialize_db() {
             pass_type varchar(15),
             b64_img text
         )
-        `
+        `,
     };
-    for (let i in (schema)) {
-        try{
-            db.run(schema[i]);
-            console.log(`Table ${i} created.`)
-        } catch(e) {
-            console.log(`table ${i} already exists.`)
-            continue;
-        }
+    try{
+        db.run(schema[table]);
+        console.log(`Table ${table} created.`)
+    } catch(e) {
+        console.log(`table ${table} already exists.`)
     }
 }
 
@@ -41,7 +38,7 @@ function connect(): Database{
     return new Database(db_path);
 }
 
-function create(db: Database, table: string, data: object) {
+function create(db: Database, table: string, data: object): Result  {
     let quote_wrapper = (lst: string[]) => {
         var wrapped_str: string = "";
         for(let i=0;i<lst.length;i++){
@@ -52,7 +49,29 @@ function create(db: Database, table: string, data: object) {
     let keys = String(Object.keys(data));
     let values = quote_wrapper(Object.values(data));
     let cmd = `INSERT INTO ${table}(${keys}) VALUES (${values});`;
-    db.run(cmd);
+
+    var res: Result = {
+        status: true,
+        msg: "Data creation successful "
+    }
+    try {
+        db.run(cmd);
+        
+    } catch(e) {
+        if ((e as Error).message == "constraint failed") {
+            var res: Result = {
+                status: false,
+                msg: `${(e as Error).message}`
+            }
+            return res
+        }
+        if ((e as Error).message.includes("no such table")){
+            initialize_db(table);
+            db.run(cmd);
+        }
+    }
+    return res
+    
 }
 
 function read(
@@ -63,18 +82,18 @@ function read(
     return_values: Array<String>
     ) {
     let val_str = String(return_values);
-    let cmd = `SELECT (${val_str}) FROM ${table} WHERE ${identifier}='${identifier_value}'`;
+    let cmd = `SELECT ${val_str} FROM ${table} WHERE ${identifier}='${identifier_value}'`;
+    console.log(cmd);
     let query = db.query(cmd);
     return query.all()
 }
 
-initialize_db();
 
 
 
 export {
     initialize_db, 
     create, 
-    read, 
+    read,
     connect
 };

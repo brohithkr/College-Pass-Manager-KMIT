@@ -1,12 +1,20 @@
+import { Interface } from "readline";
+
 interface User {
     uid: string;
     name: string;
     passwd: string;
 }
 
-interface Verifier extends User {};
+export interface Verifier extends User {};
 
-interface Pass {
+export interface Mentor extends User {
+    public_key: string,
+    private_key: string
+}
+
+
+export interface Pass {
     roll_no: string;
     issue_date: string;
     valid_till: string;
@@ -14,5 +22,11 @@ interface Pass {
     b64_img: string;
 }
 
+export interface Result {
+    status: boolean;
+    msg: string;
+}
 
-export {Verifier} ;
+
+
+
