@@ -7,7 +7,12 @@ WORKDIR /app/src/encryption
 RUN cargo build
 
 FROM oven/bun
+
+COPY --from=0 /app/src/encryption/target/debug/libencryption.so /app/src/encryption/target/debug/libencryption.so
+
 WORKDIR /app
+
+COPY . .
 
 RUN bun install
 
