@@ -1,16 +1,22 @@
 import { Interface } from "readline";
 
-interface User {
-    uid: string;
-    name: string;
-    passwd: string;
+class User {
+    public type = "User";
+    public constructor(
+        public uid: string,
+        public name: string,
+        public passwd: string
+    ) {}
 }
 
-export interface Verifier extends User {};
+export class Verifier extends User {
+    public type = "Verifier";
+};
 
-export interface Mentor extends User {
-    public_key: string,
-    private_key: string
+export class Mentor extends User {
+    public type = "Mentor";
+    // public_key: string,
+    // private_key: string
 }
 
 
@@ -30,3 +36,5 @@ export interface Result {
 
 
 
+let x = new Verifier("123","234","345");
+console.log(Object.getOwnPropertyNames(User));

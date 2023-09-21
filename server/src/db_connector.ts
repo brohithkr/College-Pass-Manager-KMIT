@@ -92,8 +92,8 @@ function read(
 
 
 export {
-    initialize_db, 
-    create, 
+    initialize_db,
+    create,
     read,
     connect
 };

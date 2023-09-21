@@ -10,3 +10,5 @@ crate-type = ["rlib","dylib"]
 [dependencies]
 base64 = "0.21.3"
 openssl = { version = "0.10.57", features = ["vendored"] }
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = { version = "1.0", default-features = false, features = ["alloc"] }

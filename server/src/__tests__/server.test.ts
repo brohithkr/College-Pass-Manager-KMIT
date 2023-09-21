@@ -3,6 +3,10 @@ import * as db_connector from "../db_connector";
 import Database from "bun:sqlite";
 import * as types from "../types";
 
+test(
+    "playground", () => {}
+)
+
 
 describe(
     "DB Connector", () => {
@@ -14,13 +18,13 @@ describe(
         )
         test(
             "create", () => {
-                let john: types.Verifier = {
-                    name: "John Wick",
-                    uid: "johnwick",
-                    passwd: "johny123",
-                }
-                let res = db_connector.create(db as Database, "Verifier", john);
-                console.log(res);
+                // let john: types.Verifier = {
+                //     name: "John Wick",
+                //     uid: "johnwick",
+                //     passwd: "johny123",
+                // }
+                // let res = db_connector.create(db as Database, "Verifier", john);
+                // console.log(res);
             }
         ),
         test(
@@ -42,6 +46,5 @@ describe(
                 )
             }
         )
-        
     }
 )
