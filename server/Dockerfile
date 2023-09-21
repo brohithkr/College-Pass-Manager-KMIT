@@ -5,7 +5,7 @@ COPY . .
 # RUN sh rustup.sh -y
 RUN apt-get update && apt-get install -y curl
 RUN sh rustup-init.sh -y
-RUN source "$HOME/.cargo/env"
+RUN . "$HOME/.cargo/env"
 WORKDIR /app/src/encryption
 RUN cargo build
 # WORKDIR /app/src/encryption
