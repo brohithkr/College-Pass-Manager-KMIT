@@ -88,6 +88,9 @@ function read(
     return query.all()
 }
 
+function disconnect(db: Database) {
+    db.close();
+}
 
 
 
@@ -95,5 +98,6 @@ export {
     initialize_db,
     create,
     read,
-    connect
+    connect,
+    disconnect
 };

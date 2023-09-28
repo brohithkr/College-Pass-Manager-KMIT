@@ -175,3 +175,4 @@ dist
 target
 *secrets*
 *.db
+*.so

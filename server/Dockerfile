@@ -1,14 +1,14 @@
-FROM rust
+FROM fedora
 
-WORKDIR /app
-COPY . .
+RUN dnf update -y
 
-WORKDIR /app/src/encryption
-RUN cargo build
+RUN dnf install -y  python3 unzip curl openssl gcc openssl-devel perl
 
-FROM oven/bun
+RUN curl -fsSL https://bun.sh/install | bash
 
-COPY --from=0 /app/src/encryption/target/debug/libencryption.so /app/src/encryption/target/debug/libencryption.so
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+ENV PATH="/root/.bun/bin:/root/.cargo/bin:${PATH}"
 
 WORKDIR /app
 
@@ -16,12 +16,16 @@ COPY . .
 
 RUN bun install
 
-ENV PORT=3000
+WORKDIR /app/src/encryption
 
-ENV DOCKER=true
+RUN cargo build
 
-EXPOSE 3000
+WORKDIR /app
 
-RUN bun test
+RUN cp /app/src/encryption/target/debug/libencryption.so /app/src/
 
-CMD [ "bun", "run", "start"]
+EXPOSE 8000
+
+# RUN bun run start
+
+CMD [ "python3", "-m", "http.server", "8000" ]

@@ -1,8 +1,8 @@
 import { CString, ptr, dlopen, FFIType, suffix } from "bun:ffi";
 
-const path = (process.env.DOCKER) ? `/app/src/encryption/target/debug/libencryption.${suffix}` :`/home/rohith/Documents/myProjects/College-Pass-Manager-KMIT/server/src/encryption/target/debug/libencryption.${suffix}`;
+var path = (process.env.DOCKER) ? `/app/libencryption.${suffix}` :`/home/rohith/Documents/myProjects/College-Pass-Manager-KMIT/server/src/encryption/target/debug/libencryption.${suffix}`;
 
-console.log(path)
+path = "./libencryption.so"
 
 const get_ptr_and_len = (s: string): [number, number] => {
     let enc = new TextEncoder();
@@ -56,4 +56,3 @@ export function RSA_decrypt(public_key_pem: string, data: string): object {
     return JSON.parse(res.toString());
 }
 
-console.log(RSA_generate());

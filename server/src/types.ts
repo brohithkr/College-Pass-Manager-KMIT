@@ -1,23 +1,17 @@
-import { Interface } from "readline";
+import Elysia, {t} from "elysia";
 
-class User {
-    public type = "User";
-    public constructor(
-        public uid: string,
-        public name: string,
-        public passwd: string
-    ) {}
+export interface User {
+        uid: string;
+        name: string;
+        passwd: string;
 }
 
-export class Verifier extends User {
-    public type = "Verifier";
-};
+export interface Verifier extends User {}
 
-export class Mentor extends User {
-    public type = "Mentor";
-    // public_key: string,
-    // private_key: string
-}
+// export interface Mentor extends User {
+//     public_key: string,
+//     private_key: string
+// }
 
 
 export interface Pass {
@@ -33,8 +27,24 @@ export interface Result {
     msg: string;
 }
 
+class ball {
+    public color: String;
+    constructor(color: String){
+        this.color = color;
+    }
+}
+
+let v2 = t.Object({
+        uid: t.String(),
+        name: t.String(),
+        passwd: t.String()
+    })
+console.log(v2.required);
+
+let hello = {
+    "hello": "123",
+};
 
 
 
-let x = new Verifier("123","234","345");
-console.log(Object.getOwnPropertyNames(User));
+console.log(hello)
