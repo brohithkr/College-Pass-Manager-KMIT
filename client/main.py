@@ -28,7 +28,6 @@ elif __file__:
     BASE_DIR = dirname(abspath(__file__))
 
 DATE = date.today()
-# DATE = date(2023, 4, 1)
 YEAR = int(str(DATE.year)[2:])
 DATA_DIR = joinpath(dirname(abspath(__file__)), "res")
 
