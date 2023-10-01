@@ -1,9 +1,11 @@
 import { CString, ptr, dlopen, FFIType, suffix } from "bun:ffi";
 
 
-var path = (process.env.DOCKER) ? `/app/libencryption.${suffix}` :`/home/rohith/Documents/myProjects/College-Pass-Manager-KMIT/server/src/encryption/target/debug/libencryption.${suffix}`;
+// var path = (process.env.DOCKER) ? `/app/libencryption.${suffix}` :`/home/rohith/Documents/myProjects/College-Pass-Manager-KMIT/server/src/encryption/target/debug/libencryption.${suffix}`;
 
-path = "./libencryption.so"
+// path = "./libencryption.so"
+
+var path = "./src/encryption/target/debug/libencryption.so"
 
 const get_ptr_and_len = (s: string): [number, number] => {
     let enc = new TextEncoder();
