@@ -1,6 +1,4 @@
 import {Database} from "bun:sqlite";
-import { expect } from "bun:test";
-
 import {Result} from "./types.ts";
 
 // var db_path = (process.env.DOCKER) ? "DB/data.db" : "/DB/data.db";
@@ -65,13 +63,12 @@ function create(db: Database, table: string, data: object): Result  {
             }
             return res
         }
-        if ((e as Error).message.includes("no such table")){
+        if ((e as Error).message.includes("no such table")) {
             initialize_db(table);
             db.run(cmd);
         }
     }
     return res
-    
 }
 
 function read(
@@ -81,12 +78,47 @@ function read(
     identifier_value: string,
     return_values: Array<String>
     ) {
-    let val_str = String(return_values);
+    let val_str = (return_values.length > 0) ? String(return_values) : "*";
     let cmd = `SELECT ${val_str} FROM ${table} WHERE ${identifier}='${identifier_value}'`;
-    console.log(cmd);
+    // console.log(cmd);
     let query = db.query(cmd);
     return query.all()
 }
+
+function update(
+    db: Database,
+    table: String,
+    identifier: string,
+    identifier_value: string,
+    update_values: object
+    ) {
+    
+    let val_arr = (Object.entries(update_values));
+    
+    var val_str = "";
+    for( let i of val_arr) {
+        console.log(i);
+        val_str += `${i[0]}='${i[1]}',`;
+    }
+    val_str = val_str.substring(0,val_str.length-1);
+    // console.log(val_str);
+    let cmd = `UPDATE ${table} SET ${val_str} WHERE ${identifier}='${identifier_value}'`;
+    // console.log(cmd);
+    let query = db.query(cmd);
+    return query.all()
+}
+
+function delete_row(
+    db: Database,
+    table: String,
+    identifier: string,
+    identifier_value: string
+    ) {
+    let cmd = `DELETE FROM ${table} WHERE ${identifier}='${identifier_value}'`;
+    let query = db.query(cmd);
+    return query.all()
+}
+
 
 function disconnect(db: Database) {
     db.close();
@@ -99,5 +131,7 @@ export {
     create,
     read,
     connect,
-    disconnect
+    disconnect,
+    update,
+    delete_row,
 };

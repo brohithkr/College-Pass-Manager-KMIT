@@ -6,7 +6,9 @@ describe(
         var private_key_pem: string, public_key_pem: string;
         test(
             "RSA generate", () => {
-                [private_key_pem, public_key_pem] = RSA_generate();
+                let keys: any = RSA_generate();
+                private_key_pem = keys.private_key_pem;
+                public_key_pem = keys.public_key_pem;
             }
         ),
         test("RSA encrypt and decrypt", () => {

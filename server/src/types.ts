@@ -1,5 +1,3 @@
-import Elysia, {t} from "elysia";
-
 export interface User {
         uid: string;
         name: string;
@@ -33,18 +31,3 @@ class ball {
         this.color = color;
     }
 }
-
-let v2 = t.Object({
-        uid: t.String(),
-        name: t.String(),
-        passwd: t.String()
-    })
-console.log(v2.required);
-
-let hello = {
-    "hello": "123",
-};
-
-
-
-console.log(hello)

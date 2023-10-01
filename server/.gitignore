@@ -176,3 +176,4 @@ target
 *secrets*
 *.db
 *.so
+admin*

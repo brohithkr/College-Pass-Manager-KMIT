@@ -36,20 +36,23 @@ const {
 } 
 )
 
-export function RSA_generate(): [string, string] {
+export function RSA_generate(): Object {
     let res = rsa_generate().toString();
     let [private_key_pem, public_key_pem] = res.split("-----\n-----");
-    return  [`${private_key_pem}-----`, `-----${public_key_pem}`];
+    return  {
+        private_key_pem: `${private_key_pem}-----`, 
+        public_key_pem: `-----${public_key_pem}`,
+    };
 }
 
-export function RSA_encrypt(private_key_pem: string, data: string): object {
+export function RSA_encrypt(private_key_pem: string, data: string): any {
     let [p, l] = get_ptr_and_len(private_key_pem);
     let [p1, l1] = get_ptr_and_len(data);
     let res = rsa_encrypt(p, l, p1, l1);
     return JSON.parse(res.toString());
 }
 
-export function RSA_decrypt(public_key_pem: string, data: string): object {
+export function RSA_decrypt(public_key_pem: string, data: string): any {
     let [p, l] = get_ptr_and_len(public_key_pem);
     let [p1, l1] = get_ptr_and_len(data);
     let res = rsa_decrypt(p, l, p1, l1);
