@@ -26,6 +26,6 @@ RUN cp /app/src/encryption/target/debug/libencryption.so /app/src/
 
 EXPOSE 8000
 
-# RUN bun run start
+CMD ["bun", "run", "start"]
 
-CMD [ "python3", "-m", "http.server", "8000" ]
+# CMD [ "python3", "-m", "http.server", "8000" ]

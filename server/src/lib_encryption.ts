@@ -1,5 +1,6 @@
 import { CString, ptr, dlopen, FFIType, suffix } from "bun:ffi";
 
+
 var path = (process.env.DOCKER) ? `/app/libencryption.${suffix}` :`/home/rohith/Documents/myProjects/College-Pass-Manager-KMIT/server/src/encryption/target/debug/libencryption.${suffix}`;
 
 path = "./libencryption.so"
@@ -40,7 +41,7 @@ export function RSA_generate(): Object {
     let res = rsa_generate().toString();
     let [private_key_pem, public_key_pem] = res.split("-----\n-----");
     return  {
-        private_key_pem: `${private_key_pem}-----`, 
+        private_key_pem: `${private_key_pem}-----`,
         public_key_pem: `-----${public_key_pem}`,
     };
 }
