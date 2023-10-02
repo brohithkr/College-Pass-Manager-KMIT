@@ -48,10 +48,6 @@ describe(
                     `${locurl}/get_timings`,
                     {
                         method: "GET",
-                        headers: {
-                            "authorization": secrect.auth_token,
-                            "Content-Type": "application/json",
-                        },
                     }
                 )
                 console.log(await res.text())
