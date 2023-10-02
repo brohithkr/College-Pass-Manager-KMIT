@@ -19,7 +19,8 @@ from PyQt5.QtCore import pyqtSlot, QSizeF
 import sys
 
 from setlunchtime import *
-from srvrcfg import SERVERURL
+from gethistory import *
+from srvrcfg import SERVERURL, headers
 
 BASE_DIR = None
 if getattr(sys, 'frozen', False):
@@ -147,9 +148,8 @@ class MainWin(QMainWindow):
         dlg.show()
 
     def dloadMonthHistory(self):
-        from webbrowser import open as open_in_browser
-        # open_in_browser("http://localhost/dloadHistory") 
-        open_in_browser("https://google.co.in")
+        dlg = GetHistoryDialog(self)
+        dlg.show()
 
     def _SetPASSimg(self, img: bytes | str | None = None) -> None:
         if type(img) != bytes:
