@@ -10,11 +10,12 @@ from datetime import datetime
 from typing import List
 import requests
 
-from srvrcfg import SERVERURL
+from srvrcfg import SERVERURL, headers
+from main import MainWin
 
 class LunchTimeDialog(QDialog):
     invalid = pyqtSignal()
-    def __init__(self, parent =None):
+    def __init__(self, parent = None):
         super().__init__(parent=parent)
         self.setWindowTitle("Set Lunch Time")
 
@@ -54,15 +55,15 @@ class LunchTimeDialog(QDialog):
         buttonBox.accepted.connect(self.setLunchTime)
 
     def getLunchTime(self):
-        # res = requests.get(f"{SERVERURL}/lunchtimes").json()
-        if (msg:=res["msg"]) == "Invalid":
-            self.parent().error(msg)
-        res = [{"start": "12:10 PM", "end": "01:00 PM"},
-                      {"start": "01:10 PM", "end": "02:00 PM"},
-                      {"start": "01:10 PM", "end": "02:00 PM"}]
+        res = requests.get(f"{SERVERURL}/get_timings").json()
+        # if (msg:=res["msg"]) == "Invalid":
+        #     self.parent().error(msg)
+        # res = [{"start": "12:10 PM", "end": "01:00 PM"},
+        #               {"start": "01:10 PM", "end": "02:00 PM"},
+        #               {"start": "01:10 PM", "end": "02:00 PM"}]
         for i in range(3):
-            start = datetime.strptime(res[i]["start"], "%I:%M %p").time()
-            end = datetime.strptime(res[i]["end"], "%I:%M %p").time()
+            start = datetime.strptime(res[i]["opening_time"], "%H:%M").time()
+            end = datetime.strptime(res[i]["closing_time"], "%H:%M").time()
 
             self.start[i].setTime(start)
             self.end[i].setTime(end)
@@ -70,22 +71,22 @@ class LunchTimeDialog(QDialog):
     def setLunchTime(self):
         lunchtimes = []
         for i in range(3):
-            lunchtimes.append({"start": self.start[i].time().toString("hh:mm A"),
-                                "end": self.end[i].time().toString("hh:mm A")})
+            lunchtimes.append({"opening_time": self.start[i].time().toString("HH:mm"),
+                                "closing_time": self.end[i].time().toString("HH:mm")})
             # print("Start", i, ":", start)
             # print("End", i, ":", end)
 
         try :
-            # res = requests.post(f"{SERVERURL}/lunchtimes", json=lunchtimes).status_code
-            pass
+            res = requests.post(f"{SERVERURL}/edit_timings", headers=headers, json=lunchtimes)
         except (requests.ConnectionError, requests.Timeout):
             self.parent().error("Internet Error! Exiting.")
             exit()
         
-        if True: #res == 200:
+        if res.status_code == 200:
+            self.parent().success("Lunch Time modified successfully.")
             self.close()
         else: 
-            self.parent().error(f"Unexpected Error. {res}")
+            self.parent().error(f"Unexpected Error. {res.content.decode()}")
 
     def closeEvent(self, a0: QCloseEvent) -> None:
         if self.parent():

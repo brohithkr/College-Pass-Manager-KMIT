@@ -167,11 +167,16 @@ class MainWin(QMainWindow):
 
     @pyqtSlot()
     def generatePass(self):
-        if (passtype:=self.PassType.currentIndex()) > 0:
+        res = None
+        if (passtype:=self.PassType.currentIndex()) >= 0:
             res = urlpost(f"{SERVERURL}/gen_pass", headers=headers, json={"rollno": self.rno.text().upper(), 
                                                                         "pass_type": "one_time" if passtype == 0 else
                                                                                     "daily" if passtype == 1 else
                                                                                     "alumni" }).content.decode()
+        else:
+            self.error("Select a PassType.")
+            return
+        
         if res.startswith("Error:"):
             self.error(res.split(":", 1)[1])
         else:
@@ -186,16 +191,16 @@ class MainWin(QMainWindow):
 
     @pyqtSlot(str)
     def error(self, msg):
-        QMessageBox.critical(self.parent(), "Error!", msg)
+        QMessageBox.critical(self, "Error!", msg)
         self.show()
 
-    @pyqtSlot()
-    def success(self):
-        QMessageBox.information(self.parent(), "Success", "Lunch Times Modified.")
+    @pyqtSlot(str)
+    def success(self, msg):
+        QMessageBox.information(self, "Success", msg)
 
     @pyqtSlot(int)
     def crash(self, response):
-        QMessageBox.critical(self.parent(), "Server Error!!", f"Unexpected server-side error occured.\nResponse code: {response}")
+        QMessageBox.critical(self, "Server Error!!", f"Unexpected server-side error occured.\nResponse code: {response}")
         exit()
 
 

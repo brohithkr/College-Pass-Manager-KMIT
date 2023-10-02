@@ -13,6 +13,8 @@ import requests
 
 from srvrcfg import SERVERURL
 
+DATE = date.today()
+
 class GetHistoryDialog(QDialog):
     invalid = pyqtSignal()
     def __init__(self, parent =None):
@@ -26,7 +28,6 @@ class GetHistoryDialog(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         buttonBox = QDialogButtonBox(QDialogButtonBox.Ok, self)
         
-        DATE = date.today()
 
         self.start = QDateEdit()
         self.start.setDate(DATE)
@@ -47,12 +48,17 @@ class GetHistoryDialog(QDialog):
         buttonBox.accepted.connect(self.getHistory)
 
     def getHistory(self):
+        if (start:=self.start.date().toPyDate()) > DATE or (end:=self.end.date().toPyDate()) > DATE or start > end:
+            self.parent().error("Provide valid range of Dates")
+            return
+
         start = self.start.date().toString("dd-MM-yyyy")
         end = self.end.date().toString("dd-MM-yyyy")
 
         from webbrowser import open as open_in_browser
-        # open_in_browser("http://localhost/dloadHistory") 
-        open_in_browser("https://google.co.in")
+        open_in_browser(f"{SERVERURL}/get_issued_passes?based_on=date&ret_type=csv&from={start}&to={end}") 
+        # open_in_browser("https://google.co.in")
+        self.parent().success("CSV Download started in browser.")
         self.close()
 
 
