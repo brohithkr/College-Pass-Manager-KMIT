@@ -67,7 +67,9 @@ describe(
                             "authorization": secrect.auth_token,
                             "Content-Type": "application/json",
                         },
-                        body: JSON.stringify({"year":"1","opening_time":"12:15","closing_time":"13:00"})
+                        body: JSON.stringify([{"opening_time":"12:15","closing_time":"13:00"},
+                        {"opening_time":"12:15","closing_time":"13:00"},
+                        {"opening_time":"12:15","closing_time":"13:00"},])
                     }
                 )
                 console.log(await res.text())
