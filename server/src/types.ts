@@ -14,8 +14,8 @@ export interface Verifier extends User {}
 
 export interface Pass {
     roll_no: string;
-    issue_date: string;
-    valid_till: string;
+    issue_date: number;
+    valid_till: number;
     pass_type: string;
     b64_img: string;
 }

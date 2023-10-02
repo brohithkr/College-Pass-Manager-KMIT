@@ -2,25 +2,17 @@ import {describe, test, expect} from "bun:test";
 import * as db_connector from "../db_connector";
 import Database from "bun:sqlite";
 import * as types from "../types";
-import secrect from "../../DB/.secrets.json"
+import secrect from "../../config/secrets.json"
 
 var locurl = "localhost:3000"
 var produrl = ""
 
 test(
     "playground", async () => {
-        // var res = await fetch (
-        //     "localhost:3000/admin/ejs", {
-        //         method: "POST",
-        //         headers: {
-        //             "authorization": "",
-        //             "Content-Type": "application/json",
-        //             // "method": "POST"
-        //         },
-        //         body: JSON.stringify({"hello": "get"})
-        //     }
-        // );
-        // console.log((await res.json()))
+        var res = await fetch(
+            "http://localhost:3000/get_issued_passes?type=json",
+        )
+
     }
 )
 
@@ -42,6 +34,45 @@ describe(
                 console.log(await res.text())
             }
         ),
+        test(
+            "get issued passes", async () => {
+                let res = await fetch(
+                    `${locurl}/get_issued_passes?`,
+                )
+                console.log(await res.text())
+            }
+        ),
+        test(
+            "get timings", async () => {
+                let res = await fetch(
+                    `${locurl}/get_timings`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "authorization": secrect.auth_token,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                )
+                console.log(await res.text())
+            }
+        )
+        test(
+            "update timings", async () => {
+                let res = await fetch(
+                    `${locurl}/edit_timings`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "authorization": secrect.auth_token,
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({"year":"1","opening_time":"12:15","closing_time":"13:00"})
+                    }
+                )
+                console.log(await res.text())
+            }
+        )
         test(
             "add verifier", async () => {
                 let ver: types.Verifier = {

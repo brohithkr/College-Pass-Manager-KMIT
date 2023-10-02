@@ -74,7 +74,8 @@ pub extern "C" fn rsa_decrypt(public_key_pem: isize, len_pem: i32, endata: isize
     let public_key_pem = get_string_from_addr(public_key_pem, len_pem);
     let endata = get_string_from_addr(endata, len_endata);
     let public_key = match Rsa::public_key_from_pem(
-        public_key_pem.as_bytes()
+        public_key_pem.as_byte    unsafe{String::from_utf8((&*ptr).to_vec()).unwrap()}
+        s()
     ) {
         Ok(key) => key,
         Err(e) => return get_cstring(Err::<String,String>(e.to_string()))
