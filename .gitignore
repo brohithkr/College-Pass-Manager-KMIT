@@ -1,3 +1,4 @@
 .vscode
 srvrcfg.py
 __pycache__
+.config.ini

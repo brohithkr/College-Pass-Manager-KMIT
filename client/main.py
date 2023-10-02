@@ -70,8 +70,6 @@ class MainWin(QMainWindow):
 
         self.GenPassBtn.pressed.connect(self.generatePass)
         self.PrintBtn.pressed.connect(self.printQR)
-        self.passScene = QGraphicsScene()
-        self.PASSimgbox = QGraphicsPixmapItem()
 
         self.setupOptions()
         self.handleRollNo("")
@@ -102,9 +100,10 @@ class MainWin(QMainWindow):
             self.PassType.model().item(2).setEnabled(True)
 
     def updateDetails(self):
-        details = {"name": None, "section": None, "year": None} # urlget("http://localhost:3000/details").json()
-        self.details.setText(f"#### Name:\n##### {details['name']}\n---\n##### Section: {details['section']}\n##### Year: {details['year']}\n")
-        self.details.setAlignment(Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+        # details = {"name": None, "section": None, "year": None} # urlget("http://localhost:3000/details").json()
+        # self.details.setText(f"#### Name:\n##### {details['name']}\n---\n##### Section: {details['section']}\n##### Year: {details['year']}\n")
+        # self.details.setAlignment(Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+        ...
 
     def printQR(self):
         Printer = QPrinter(QPrinterInfo.defaultPrinter())
@@ -120,7 +119,7 @@ class MainWin(QMainWindow):
 
         painter.begin(Printer)
         res = min(Printer.width(), Printer.height())
-        painter.drawImage(0,0,self.PassImg.smoothScaled(res, res))
+        painter.drawImage(0,0,self.PassImg.scaled(res, res))
         painter.end()
 
         pagesize = Printer.pageSizeMM()
@@ -152,12 +151,13 @@ class MainWin(QMainWindow):
         dlg.show()
 
     def _SetPASSimg(self, img: bytes | str | None = None) -> None:
+        self.passScene = QGraphicsScene()
+        self.PASSimgbox = QGraphicsPixmapItem()
         if type(img) != bytes:
             self.passScene.addText("Enter Data" if img == None else img)
             self.PrintBtn.setDisabled(True)
         else: 
             self.PassImg = QImage.fromData(b64d(img), 'PNG')
-            # self.PassImg = QImage(joinpath(DATA_DIR, "Gear.jpg"))
             self.PassPixMap = QPixmap.fromImage(self.PassImg).scaled(360, 360)
             self.PASSimgbox.setPixmap(self.PassPixMap)
             self.passScene.addItem(self.PASSimgbox)
@@ -167,11 +167,22 @@ class MainWin(QMainWindow):
 
     @pyqtSlot()
     def generatePass(self):
-        res = urlpost(f"{SERVERURL}/newpass", json={"rno": self.rno.text().upper()}).json()
-        if (msg:=res["msg"]) == "Invalid":
-            self.error(msg)
-        passimg = res['b64qr']
-        self._SetPASSimg(passimg)
+        if (passtype:=self.PassType.currentIndex()) > 0:
+            res = urlpost(f"{SERVERURL}/gen_pass", headers=headers, json={"rollno": self.rno.text().upper(), 
+                                                                        "pass_type": "one_time" if passtype == 0 else
+                                                                                    "daily" if passtype == 1 else
+                                                                                    "alumni" }).content.decode()
+        if res.startswith("Error:"):
+            self.error(res.split(":", 1)[1])
+        else:
+            passimg = None
+            data = res.split("\n")
+            if res.startswith("Warning:"):
+                self.error(data[0])
+                passimg = data[1]
+            else:
+                passimg = res
+            self._SetPASSimg(passimg.encode())
 
     @pyqtSlot(str)
     def error(self, msg):
