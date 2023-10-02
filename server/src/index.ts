@@ -50,7 +50,7 @@ const app = new Elysia()
         ) as Pass[]
         for(let i of prevPasses) {
             if(Date.now() <= (i.valid_till)) {
-                return `Error: ${body.rollno} already owns a Valid pass:\n${i.b64_img}`
+                return `Warning: ${body.rollno} already owns a Valid pass:\n${i.b64_img}`
             }
         }
         let pass = utlis.gen_pass(body.rollno, body.pass_type)
@@ -141,24 +141,27 @@ const app = new Elysia()
             set.status = 401;
             return "Unauthorized";
         }
-        db_connector.update(
-            db,
-            "Lunch_Timings",
-            "year",
-            (body.year),
-            {
-                opening_time: body.opening_time,
-                closing_time: body.closing_time
-            }
-        )
+        let req: any = body;
+        for(let i in req){
+            db_connector.update(
+                db,
+                "Lunch_Timings",
+                "year",
+                (String(parseInt(i) + 1)),
+                {
+                    opening_time: req[i].opening_time,
+                    closing_time: req[i].closing_time
+                }
+            )
+        }
     },
-    {
-        body: t.Object({
-            year: t.String(),
-            opening_time: t.String(),
-            closing_time: t.String()
-        })
-    }
+    // {
+    //     body: t.Object({
+    //         year: t.String(),
+    //         opening_time: t.String(),
+    //         closing_time: t.String()
+    //     })
+    // }
 )
 .get(
     "/get_timings", ({body, headers, set, db}) => {
