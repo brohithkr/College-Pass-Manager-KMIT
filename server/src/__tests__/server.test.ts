@@ -52,7 +52,7 @@ describe(
                 )
                 console.log(await res.text())
             }
-        )
+        ),
         test(
             "update timings", async () => {
                 let res = await fetch(
@@ -69,6 +69,7 @@ describe(
                     }
                 )
                 console.log(await res.text())
+                console.log(res.status)
             }
         )
         test(

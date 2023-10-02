@@ -95,7 +95,7 @@ const app = new Elysia()
             let fromlst = (from as string).split("-").map((i) => parseInt(i))
             let tolst = (to as string).split("-").map((i) => parseInt(i))
             var from_stamp = Date.UTC(fromlst[2], fromlst[1]-1, fromlst[0])
-            var to_stamp = Date.UTC(tolst[2], tolst[1]-1, tolst[0])
+            var to_stamp = Date.UTC(tolst[2], tolst[1]-1, tolst[0]) + 24*(60*60)*1000
             let query = db.query("SELECT * FROM Issued_Pass WHERE issue_date BETWEEN ? AND ?")
             pass_lst =  query.all(from_stamp, to_stamp) as Pass[]
         }
@@ -108,6 +108,10 @@ const app = new Elysia()
                 rollno as string,
                 []
             ) as Pass[]
+        }
+
+        if(pass_lst.length == 0) {
+            return "No passes were were issued in this range"
         }
 
         if(ret_type == "json") {
