@@ -22,9 +22,9 @@ RUN cargo build
 
 WORKDIR /app
 
-RUN cp /app/src/encryption/target/debug/libencryption.so /app/src/
+# RUN cp /app/src/encryption/target/debug/libencryption.so /app/
 
-EXPOSE 8000
+EXPOSE 3000
 
 CMD ["bun", "run", "start"]
 
