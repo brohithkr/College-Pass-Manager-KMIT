@@ -8,6 +8,10 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import './utlis.dart';
 
+var publicKeyPem =
+    "-----BEGIN PUBLIC KEY-----\nMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAPCI7pP6xxNz0YGR29ykfGqsXIfwoi21\nJQr5sDjcSqLNGDHgPesdc+noOmlWyNMkHm3ohUUqAaIbuzHvKisGc58CAwEAAQ==\n-----END PUBLIC KEY-----\n";
+
+
 void main() {
   runApp(const MaterialApp(
     title: "Scanner",

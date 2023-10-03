@@ -1,5 +1,10 @@
 import 'dart:convert';
 
+import 'ffi.dart';
+
+var publicKeyPem =
+    "-----BEGIN PUBLIC KEY-----\nMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAPCI7pP6xxNz0YGR29ykfGqsXIfwoi21\nJQr5sDjcSqLNGDHgPesdc+noOmlWyNMkHm3ohUUqAaIbuzHvKisGc58CAwEAAQ==\n-----END PUBLIC KEY-----\n";
+
 int rollToYear(String rollno) {
   var today = DateTime.now();
   int year = 0;
@@ -19,8 +24,6 @@ int rollToYear(String rollno) {
 //   return int8List.asByteArray().getInt32(0);
 // }
 
-
-
 // int numFromBase64(String s) {
 //   var bytes = base64Decode(s);
 //   let num = bytes.
@@ -31,6 +34,3 @@ int rollToYear(String rollno) {
 //   return true
 // }
 
-void main() {
-  // print(rollToYear("21BD1A0505"));
-}
