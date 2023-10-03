@@ -106,6 +106,7 @@ class MainWin(QMainWindow):
         ...
 
     def printQR(self):
+        self.status.setText("Printing Pass")
         Printer = QPrinter(QPrinterInfo.defaultPrinter())
         saved_size = None
         if savedPageSize:
@@ -122,6 +123,8 @@ class MainWin(QMainWindow):
         painter.drawImage(0,0,self.PassImg.scaled(res, res))
         painter.end()
 
+        self.status.setText("Printing Pass")
+
         pagesize = Printer.pageSizeMM()
         if saved_size != (wd:=pagesize.width(), ht:=pagesize.height()):
             cfg["PageSize"]["width"], cfg["PageSize"]["height"] = str(wd), str(ht)
@@ -131,7 +134,7 @@ class MainWin(QMainWindow):
     def setupOptions(self):
         settingsMenu = QMenu(self)
         settingsMenu.addAction('Set Lunch time', self.setLunchTime)
-        settingsMenu.addAction('Download history', self.dloadMonthHistory)
+        settingsMenu.addAction('Download History', self.dloadMonthHistory)
 
         self.Tools.setMenu(settingsMenu)
         self.Tools.setDefaultAction(QAction(self))
@@ -143,12 +146,16 @@ class MainWin(QMainWindow):
         self.Tools.setText(None)
 
     def setLunchTime(self):
+        self.status.setText("Modifying Lunch Time")
         dlg = LunchTimeDialog(self)
         dlg.show()
+        self.status.setText("Waiting...")
 
     def dloadMonthHistory(self):
+        self.status.setText("Downloading Pass History")
         dlg = GetHistoryDialog(self)
         dlg.show()
+        self.status.setText("Waiting...")
 
     def _SetPASSimg(self, img: bytes | str | None = None) -> None:
         self.passScene = QGraphicsScene()
@@ -167,6 +174,7 @@ class MainWin(QMainWindow):
 
     @pyqtSlot()
     def generatePass(self):
+        self.status.setText("Processing...")
         res = None
         if (passtype:=self.PassType.currentIndex()) >= 0:
             res = urlpost(f"{SERVERURL}/gen_pass", headers=headers, json={"rollno": self.rno.text().upper(), 
@@ -175,10 +183,14 @@ class MainWin(QMainWindow):
                                                                                     "alumni" }).content.decode()
         else:
             self.error("Select a PassType.")
+            self.status.setText("Waiting...")
             return
         
+        self.status.setText("Generating Pass")
+
         if res.startswith("Error:"):
             self.error(res.split(":", 1)[1])
+            self.status.setText("Waiting...")
         else:
             passimg = None
             data = res.split("\n")
@@ -188,6 +200,7 @@ class MainWin(QMainWindow):
             else:
                 passimg = res
             self._SetPASSimg(passimg.encode())
+            self.status.setText("Done")
 
     @pyqtSlot(str)
     def error(self, msg):
