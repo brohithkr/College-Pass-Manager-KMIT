@@ -177,10 +177,16 @@ class MainWin(QMainWindow):
         self.status.setText("Processing...")
         res = None
         if (passtype:=self.PassType.currentIndex()) >= 0:
-            res = urlpost(f"{SERVERURL}/gen_pass", headers=headers, json={"rollno": self.rno.text().upper(), 
-                                                                          "pass_type": "one_time" if passtype == 0 else
-                                                                                       "daily" if passtype == 1 else
-                                                                                       "alumni" }).content.decode()
+            try:
+                res = urlpost(f"{SERVERURL}/gen_pass", headers=headers, json={"rollno": self.rno.text().upper(), 
+                                                                              "pass_type": "one_time" if passtype == 0 else
+                                                                                           "daily" if passtype == 1 else
+                                                                                           "alumni" }).content.decode()
+            except (ConnectionError, Timeout):
+                self.error("Connection Error!\nCheck Internet & Try again.")
+                self.status.setText("Connection Error.")
+                return
+
         else:
             self.error("Select a PassType.")
             self.status.setText("Waiting...")

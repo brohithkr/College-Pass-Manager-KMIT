@@ -5,11 +5,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QKeyEvent, QCloseEvent
 from PyQt5.QtCore import pyqtSignal, Qt 
 
-from sys import exit
 from datetime import date
-
-from typing import List
-import requests
 
 from srvrcfg import SERVERURL
 

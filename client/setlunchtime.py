@@ -4,14 +4,12 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QKeyEvent, QCloseEvent
 from PyQt5.QtCore import pyqtSignal, Qt 
-from sys import exit
-from datetime import datetime
 
+from datetime import datetime
 from typing import List
-import requests
+from requests import get as urlget, post as urlpost, ConnectionError, Timeout
 
 from srvrcfg import SERVERURL, headers
-from main import MainWin
 
 class LunchTimeDialog(QDialog):
     invalid = pyqtSignal()
@@ -55,7 +53,7 @@ class LunchTimeDialog(QDialog):
         buttonBox.accepted.connect(self.setLunchTime)
 
     def getLunchTime(self):
-        res = requests.get(f"{SERVERURL}/get_timings").json()
+        res = urlget(f"{SERVERURL}/get_timings").json()
         # if (msg:=res["msg"]) == "Invalid":
         #     self.parent().error(msg)
         # res = [{"start": "12:10 PM", "end": "01:00 PM"},
@@ -77,14 +75,16 @@ class LunchTimeDialog(QDialog):
             # print("End", i, ":", end)
 
         try :
-            res = requests.post(f"{SERVERURL}/edit_timings", headers=headers, json=lunchtimes)
-        except (requests.ConnectionError, requests.Timeout):
+            res = urlpost(f"{SERVERURL}/edit_timings", headers=headers, json=lunchtimes)
+        except (ConnectionError, Timeout):
             self.parent().error("Connection Error!\nCheck Internet & Try again.")
-        
+            self.parent().status.setText("Connection Error.")
+
         if res.status_code == 200:
             self.parent().success("Lunch Time modified successfully.")
             self.close()
         else: 
+            self.parent().status.setText("Unexpected Error.")
             self.parent().error(f"Unexpected Error. {res.content.decode()}")
 
     def closeEvent(self, a0: QCloseEvent) -> None:
