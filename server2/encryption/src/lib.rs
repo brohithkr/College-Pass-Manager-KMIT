@@ -2,8 +2,6 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-#[link(name="encryption")]
-pub extern "C" {
 use openssl::{rsa::{ Rsa ,Padding }, error::ErrorStack};
 use base64::{Engine as _, engine::general_purpose};
 
@@ -54,5 +52,4 @@ pub fn rsa_decrypt(public_key_pem: &String, endata: &String) -> Result<String, E
     Ok(
         String::from_utf8(data).unwrap()
     )
-}
 }
