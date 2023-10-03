@@ -72,15 +72,14 @@ class LunchTimeDialog(QDialog):
         lunchtimes = []
         for i in range(3):
             lunchtimes.append({"opening_time": self.start[i].time().toString("HH:mm"),
-                                "closing_time": self.end[i].time().toString("HH:mm")})
+                               "closing_time": self.end[i].time().toString("HH:mm")})
             # print("Start", i, ":", start)
             # print("End", i, ":", end)
 
         try :
             res = requests.post(f"{SERVERURL}/edit_timings", headers=headers, json=lunchtimes)
         except (requests.ConnectionError, requests.Timeout):
-            self.parent().error("Internet Error! Exiting.")
-            exit()
+            self.parent().error("Connection Error!\nCheck Internet & Try again.")
         
         if res.status_code == 200:
             self.parent().success("Lunch Time modified successfully.")
