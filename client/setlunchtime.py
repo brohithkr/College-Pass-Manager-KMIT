@@ -91,8 +91,3 @@ class LunchTimeDialog(QDialog):
         if self.parent():
             self.parent().setEnabled(True)
         return super().closeEvent(a0)
-    
-    def keyPressEvent(self, e: QKeyEvent) -> None:
-        if e.key() != Qt.Key.Key_Escape:
-            QDialog.keyPressEvent(self, e)
-
