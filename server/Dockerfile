@@ -29,6 +29,6 @@ RUN mkdir config
 
 EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+# CMD ["bun", "run", "start"]
 
-# CMD [ "python3", "-m", "http.server", "8000" ]
+CMD [ "python3", "-m", "http.server", "8000" ]
