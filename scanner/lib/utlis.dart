@@ -43,7 +43,10 @@ bool isValidPass(dynamic pass, dynamic timings) {
     return false;
   }
 
-  var year = rollToYear(pass['rno']);
+  int year = rollToYear(pass['rno']);
+  if (year >= 4) {
+    return true;
+  }
   var timing = timings[year - 1];
 
   var st_arr = (timing['opening_time'].split(":") as List<String>)

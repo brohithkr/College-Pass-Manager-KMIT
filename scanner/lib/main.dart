@@ -12,7 +12,7 @@ import './utlis.dart';
 late var timings;
 
 void main() {
-  print(api.add(left: 1, right: 3));
+  // print(api.add(left: 1, right: 3));
   timings = [
     {"year": 1, "opening_time": "12:15", "closing_time": "13:00"},
     {"year": 2, "opening_time": "12:15", "closing_time": "13:00"},
