@@ -24,6 +24,7 @@ WORKDIR /app
 
 RUN mkdir DB
 
+RUN mkdir config
 # RUN cp /app/src/encryption/target/debug/libencryption.so /app/
 
 EXPOSE 3000
