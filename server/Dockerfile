@@ -22,6 +22,8 @@ RUN cargo build
 
 WORKDIR /app
 
+RUN mkdir DB
+
 # RUN cp /app/src/encryption/target/debug/libencryption.so /app/
 
 EXPOSE 3000
