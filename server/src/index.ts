@@ -1,6 +1,6 @@
 import {Elysia, t} from 'elysia';
 import { swagger } from '@elysiajs/swagger'
-import {RSA_generate, RSA_encrypt} from "./lib_encryption"
+import {RSA_generate, RSA_encrypt, encrypt} from "./lib_encryption"
 import { Verifier, Pass, Result } from './types';
 import * as db_connector from "./db_connector";
 import * as utlis from "./utlis";
@@ -54,12 +54,15 @@ const app = new Elysia()
             }
         }
         let pass = utlis.gen_pass(body.rollno, body.pass_type)
-        let enpass = RSA_encrypt(
-            secrets.private_key_pem,
-            JSON.stringify(pass)
-        ).Ok
+        // let enpass = RSA_encrypt(
+        //     secrets.private_key_pem,
+        //     JSON.stringify(pass)
+        // ).Ok
+
+        let enpass = encrypt(JSON.stringify(pass));
+        console.log(enpass);
         let passb64 = utlis.gen_qrcode(enpass)
-        console.log(enpass)
+        // console.log(enpass)
         db_connector.create(
             db,
             "Issued_Pass",
@@ -91,16 +94,23 @@ const app = new Elysia()
         ret_type, based_on, rollno, from, to
     }, db}) => {
         var pass_lst: Pass[] = []
-        if(based_on == "date") {
+        
+        if((from != undefined) && (to != undefined)) {
             let fromlst = (from as string).split("-").map((i) => parseInt(i))
             let tolst = (to as string).split("-").map((i) => parseInt(i))
             var from_stamp = Date.UTC(fromlst[2], fromlst[1]-1, fromlst[0])
             var to_stamp = Date.UTC(tolst[2], tolst[1]-1, tolst[0]) + 24*(60*60)*1000
-            let query = db.query("SELECT * FROM Issued_Pass WHERE issue_date BETWEEN ? AND ?")
-            pass_lst =  query.all(from_stamp, to_stamp) as Pass[]
+            if(rollno != undefined) {
+                let cmd = `SELECT roll_no,issue_date,valid_till,pass_type FROM Issued_Pass WHERE (roll_no = '${rollno}') AND (issue_date BETWEEN ${from_stamp} AND ${to_stamp})`
+                let query = db.query(cmd)
+                pass_lst =  query.all() as Pass[]
+            }
+            else {
+                let query = db.query("SELECT * FROM Issued_Pass WHERE issue_date BETWEEN ? AND ?")
+                pass_lst =  query.all(from_stamp, to_stamp) as Pass[]
+            }
         }
-
-        if(based_on == "rollno") {
+        else if(rollno != undefined) {
             pass_lst = db_connector.read(
                 db,
                 "Issued_Pass",
@@ -111,7 +121,7 @@ const app = new Elysia()
         }
 
         if(pass_lst.length == 0) {
-            return "No passes were were issued in this range"
+            return "No passes were found."
         }
 
         if(ret_type == "json") {

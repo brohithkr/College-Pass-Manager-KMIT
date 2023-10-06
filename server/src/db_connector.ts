@@ -65,7 +65,7 @@ function create(db: Database, table: string, data: object): Result  {
         status: true,
         msg: "Data creation successful "
     }
-    console.log(`Data inserted into ${table}`);
+    // console.log(`Data inserted into ${table}`);
     db.run(cmd);
     // try {
     //     db.run(cmd);

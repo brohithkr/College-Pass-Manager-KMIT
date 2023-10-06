@@ -62,3 +62,6 @@ export function RSA_decrypt(public_key_pem: string, data: string): any {
     return JSON.parse(res.toString());
 }
 
+export function encrypt(data: string) {
+    return data;
+}

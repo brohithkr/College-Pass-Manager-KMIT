@@ -7,6 +7,7 @@ import secrect from "../../config/secrets.json"
 var locurl = "localhost:3000"
 var produrl = ""
 
+
 test(
     "playground", async () => {
         var res = await fetch(
@@ -37,7 +38,7 @@ describe(
         test(
             "get issued passes", async () => {
                 let res = await fetch(
-                    `${locurl}/get_issued_passes?`,
+                    `${locurl}/get_issued_passes?ret_type=json&rollno=22BD1A0505&from=01-10-2023&to=06-10-2023`,
                 )
                 console.log(await res.text())
             }
