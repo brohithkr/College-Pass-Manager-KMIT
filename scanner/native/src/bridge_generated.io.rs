@@ -2,6 +2,11 @@ use super::*;
 // Section: wire functions
 
 #[no_mangle]
+pub extern "C" fn wire_rsa_generate(port_: i64) {
+    wire_rsa_generate_impl(port_)
+}
+
+#[no_mangle]
 pub extern "C" fn wire_rsa_encrypt(
     port_: i64,
     private_key_pem: *mut wire_uint_8_list,

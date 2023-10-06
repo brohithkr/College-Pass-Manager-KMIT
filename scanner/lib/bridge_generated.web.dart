@@ -43,6 +43,8 @@ external NativeWasmModule get wasmModule;
 class NativeWasmModule implements WasmModule {
   external Object /* Promise */ call([String? moduleName]);
   external NativeWasmModule bind(dynamic thisArg, String moduleName);
+  external dynamic /* void */ wire_rsa_generate(NativePortType port_);
+
   external dynamic /* void */ wire_rsa_encrypt(
       NativePortType port_, String private_key_pem, String data);
 
@@ -58,6 +60,9 @@ class NativeWasmModule implements WasmModule {
 class NativeWire extends FlutterRustBridgeWasmWireBase<NativeWasmModule> {
   NativeWire(FutureOr<WasmModule> module)
       : super(WasmModule.cast<NativeWasmModule>(module));
+
+  void wire_rsa_generate(NativePortType port_) =>
+      wasmModule.wire_rsa_generate(port_);
 
   void wire_rsa_encrypt(
           NativePortType port_, String private_key_pem, String data) =>

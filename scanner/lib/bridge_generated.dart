@@ -20,6 +20,23 @@ class NativeImpl implements Native {
   factory NativeImpl.wasm(FutureOr<WasmModule> module) =>
       NativeImpl(module as ExternalLibrary);
   NativeImpl.raw(this._platform);
+  Future<(String, String)> rsaGenerate({dynamic hint}) {
+    return _platform.executeNormal(FlutterRustBridgeTask(
+      callFfi: (port_) => _platform.inner.wire_rsa_generate(port_),
+      parseSuccessData: _wire2api___record__String_String,
+      parseErrorData: null,
+      constMeta: kRsaGenerateConstMeta,
+      argValues: [],
+      hint: hint,
+    ));
+  }
+
+  FlutterRustBridgeTaskConstMeta get kRsaGenerateConstMeta =>
+      const FlutterRustBridgeTaskConstMeta(
+        debugName: "rsa_generate",
+        argNames: [],
+      );
+
   Future<String> rsaEncrypt(
       {required String privateKeyPem, required String data, dynamic hint}) {
     var arg0 = _platform.api2wire_String(privateKeyPem);
@@ -86,6 +103,17 @@ class NativeImpl implements Native {
 
   String _wire2api_String(dynamic raw) {
     return raw as String;
+  }
+
+  (String, String) _wire2api___record__String_String(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      _wire2api_String(arr[0]),
+      _wire2api_String(arr[1]),
+    );
   }
 
   int _wire2api_u8(dynamic raw) {

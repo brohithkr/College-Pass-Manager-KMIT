@@ -130,6 +130,20 @@ class NativeWire implements FlutterRustBridgeWireBase {
   late final _init_frb_dart_api_dl = _init_frb_dart_api_dlPtr
       .asFunction<int Function(ffi.Pointer<ffi.Void>)>();
 
+  void wire_rsa_generate(
+    int port_,
+  ) {
+    return _wire_rsa_generate(
+      port_,
+    );
+  }
+
+  late final _wire_rsa_generatePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int64)>>(
+          'wire_rsa_generate');
+  late final _wire_rsa_generate =
+      _wire_rsa_generatePtr.asFunction<void Function(int)>();
+
   void wire_rsa_encrypt(
     int port_,
     ffi.Pointer<wire_uint_8_list> private_key_pem,

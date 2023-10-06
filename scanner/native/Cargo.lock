@@ -305,6 +305,7 @@ dependencies = [
 name = "native"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "base64",
  "flutter_rust_bridge",
  "openssl",

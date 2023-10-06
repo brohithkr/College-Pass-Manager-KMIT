@@ -22,6 +22,16 @@ use std::sync::Arc;
 
 // Section: wire functions
 
+fn wire_rsa_generate_impl(port_: MessagePort) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap::<_, _, _, (String, String), _>(
+        WrapInfo {
+            debug_name: "rsa_generate",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || move |task_callback| Result::<_, ()>::Ok(rsa_generate()),
+    )
+}
 fn wire_rsa_encrypt_impl(
     port_: MessagePort,
     private_key_pem: impl Wire2Api<String> + UnwindSafe,

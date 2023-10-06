@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 
 import 'ffi.dart';
 
-var publicKeyPem =
-    "-----BEGIN PUBLIC KEY-----\nMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAPCI7pP6xxNz0YGR29ykfGqsXIfwoi21\nJQr5sDjcSqLNGDHgPesdc+noOmlWyNMkHm3ohUUqAaIbuzHvKisGc58CAwEAAQ==\n-----END PUBLIC KEY-----\n";
+var hosturl = "http://localhost:3000";
 
 int rollToYear(String rollno) {
   var today = DateTime.now();
@@ -15,22 +16,56 @@ int rollToYear(String rollno) {
   return year;
 }
 
-// int fromBytesToInt32(int b3, int b2, int b1, int b0) {
-//   final int8List = Int8List(4)
-//     ..[3] = b3
-//     ..[2] = b2
-//     ..[1] = b1
-//     ..[0] = b0;
-//   return int8List.asByteArray().getInt32(0);
+dynamic getDecryptedData(String endata) {
+  Map res;
+  try {
+    res = jsonDecode(endata);
+    //   if (res.keys.toList() != ["rno", "valid_till"]) {
+    //     return null;
+  } catch (e) {
+    return null;
+  }
+  return res;
+}
+
+dynamic get_timings() async {
+  var res = await http.get(
+    Uri.parse("$hosturl/get_timings"),
+  );
+  return jsonDecode(res.body);
+}
+
+bool isValidPass(dynamic pass, dynamic timings) {
+  // print(timings[]);
+  int validTill = (pass['valid_till']);
+  var now = DateTime.now();
+  if (now.millisecondsSinceEpoch > validTill) {
+    return false;
+  }
+
+  var year = rollToYear(pass['rno']);
+  var timing = timings[year - 1];
+
+  var st_arr = (timing['opening_time'].split(":") as List<String>)
+      .map((e) => int.parse(e))
+      .toList();
+  var en_arr = (timing['closing_time'].split(":") as List<String>)
+      .map((e) => int.parse(e))
+      .toList();
+
+  int startStamp =
+      DateTime(now.year, now.month, now.day, st_arr[0], st_arr[1], 0)
+          .millisecondsSinceEpoch;
+  int endStamp = DateTime(now.year, now.month, now.day, en_arr[0], en_arr[1], 0)
+      .millisecondsSinceEpoch;
+  int nowStamp = now.millisecondsSinceEpoch;
+  if (!(nowStamp > startStamp && nowStamp < endStamp)) {
+    return false;
+  }
+
+  return true;
+}
+
+// void main() async {
+
 // }
-
-// int numFromBase64(String s) {
-//   var bytes = base64Decode(s);
-//   let num = bytes.
-// }
-
-// bool isValidPass(String issueDate) {
-
-//   return true
-// }
-

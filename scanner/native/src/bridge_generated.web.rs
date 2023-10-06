@@ -2,6 +2,11 @@ use super::*;
 // Section: wire functions
 
 #[wasm_bindgen]
+pub fn wire_rsa_generate(port_: MessagePort) {
+    wire_rsa_generate_impl(port_)
+}
+
+#[wasm_bindgen]
 pub fn wire_rsa_encrypt(port_: MessagePort, private_key_pem: String, data: String) {
     wire_rsa_encrypt_impl(port_, private_key_pem, data)
 }

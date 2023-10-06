@@ -11,6 +11,10 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class Native {
+  Future<(String, String)> rsaGenerate({dynamic hint});
+
+  FlutterRustBridgeTaskConstMeta get kRsaGenerateConstMeta;
+
   Future<String> rsaEncrypt(
       {required String privateKeyPem, required String data, dynamic hint});
 

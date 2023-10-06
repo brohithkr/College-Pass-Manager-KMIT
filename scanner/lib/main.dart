@@ -6,13 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
+import 'ffi.dart';
 import './utlis.dart';
 
-var publicKeyPem =
-    "-----BEGIN PUBLIC KEY-----\nMFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAPCI7pP6xxNz0YGR29ykfGqsXIfwoi21\nJQr5sDjcSqLNGDHgPesdc+noOmlWyNMkHm3ohUUqAaIbuzHvKisGc58CAwEAAQ==\n-----END PUBLIC KEY-----\n";
-
+late var timings;
 
 void main() {
+  print(api.add(left: 1, right: 3));
+  timings = [
+    {"year": 1, "opening_time": "12:15", "closing_time": "13:00"},
+    {"year": 2, "opening_time": "12:15", "closing_time": "13:00"},
+    {"year": 3, "opening_time": "12:15", "closing_time": "13:00"}
+  ];
   runApp(const MaterialApp(
     title: "Scanner",
     home: SafeArea(
@@ -37,7 +42,11 @@ class _MyAppState extends State<MyApp> {
     String scanRes;
     try {
       scanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
+        '#ff6666',
+        'Cancel',
+        true,
+        ScanMode.QR,
+      );
     } on PlatformException {
       scanRes = 'Failed to get platform version.';
     }
@@ -55,42 +64,7 @@ class _MyAppState extends State<MyApp> {
           child: MainPage(
             scanData: _scanData,
             toDo: scanQR,
-          )
-          // Column(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     // ScanButton(),
-          //     InkWell(
-          //       onTap: () {
-          //         showDialog(
-          //           context: context,
-          //           builder: (context) => ValidityMsg(isValid: true, year: 1),
-          //         );
-          //         print("Tapped!");
-          //       },
-          //       child: Opacity(
-          //         opacity: .7,
-          //         child: Container(
-          //           height: 100,
-          //           width: 100,
-          //           decoration: BoxDecoration(
-          //               borderRadius: BorderRadius.circular(8),
-          //               color: Colors.amber),
-          //           child: Center(
-          //             child: Text(
-          //               "Start Scanning",
-          //               style: TextStyle(
-          //                 fontSize: 20,
-          //                 fontWeight: FontWeight.bold,
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // )
-          ),
+          )),
     );
   }
 }
@@ -102,7 +76,7 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (scanData == "--") {
+    if (scanData == "--" || scanData == "-1") {
       return Center(
         child: ScanButton(
           label: "Start Scanning",
@@ -110,20 +84,24 @@ class MainPage extends StatelessWidget {
         ),
       );
     } else {
+      var pass = (getDecryptedData(scanData));
+      if (pass == null) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ValidityBox(isValid: false, msg: "Not a valid pass!".toString()),
+            ScanButton(label: "Scan", toDo: toDo),
+          ],
+        );
+      }
+      bool isValid = isValidPass(pass, timings);
+      int year = rollToYear(pass['rno']);
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ValidityBox(isValid: true, year: 1),
-          SizedBox(
-            width: 300,
-            child: Text(
-              scanData,
-              style: TextStyle(
-                fontSize: 10,
-              ),
-            ),
-          ),
+          ValidityBox(isValid: isValid, msg: year.toString()),
           ScanButton(label: "Scan", toDo: toDo),
         ],
       );
@@ -154,8 +132,8 @@ class ScanButton extends StatelessWidget {
 
 class ValidityBox extends StatelessWidget {
   final bool isValid;
-  final int year;
-  const ValidityBox({required this.isValid, required this.year, super.key});
+  final String msg;
+  const ValidityBox({required this.isValid, required this.msg, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -166,6 +144,14 @@ class ValidityBox extends StatelessWidget {
       child: Column(
         children: [
           AffirmIcon(isValid: isValid),
+          Center(
+            child: Text(
+              (msg),
+              style: TextStyle(
+                  fontSize: (msg.contains('!')) ? 20 : 40,
+                  color: (msg.contains('!')) ? Colors.red[900] : Colors.black),
+            ),
+          ),
         ],
       ),
     );
