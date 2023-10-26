@@ -2,6 +2,15 @@ import QRCode from 'qrcode';
 
 import Database from 'bun:sqlite';
 
+export function roll_to_year(rno: string): number {
+    let today = new Date()
+    let year = today.getFullYear() - parseInt(`20${rno.substring(0,3)}`)
+    if(today.getMonth() > 8) {
+        year += 1
+    }
+    return year
+}
+
 export function get_ist_timestamp(date: Date) {
     return new Date(date.getTime() + (330) * 60 * 1000);
 }
@@ -41,7 +50,8 @@ export function gen_pass(rollno: string, pass_type: string) {
     }
     let pass = {
         rno: rollno,
-        valid_till: valid_till.getTime()
+        valid_till: valid_till.getTime(),
+
     }
 
     return pass
