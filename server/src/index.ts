@@ -1,19 +1,19 @@
 import {Elysia, t} from 'elysia';
 import { swagger } from '@elysiajs/swagger'
-import {RSA_generate, RSA_encrypt, encrypt} from "./lib_encryption"
+// import {RSA_generate, RSA_encrypt, encrypt} from "./lib_encryption"
 import { Verifier, Pass, Result } from './types';
 import * as db_connector from "./db_connector";
 import * as utlis from "./utlis";
 
-var secret_file = Bun.file("config/secrets.json")
-var key_file = Bun.file("config/admin_keys.json")
+var secret_file = Bun.file("secrets/secrets.json")
+var key_file = Bun.file("secrets/admin_keys.json")
 var secrets: any = {}
 
 if (secret_file.size == 0) {
-    console.log("plsease provide secrets in config/.secrets.json")
+    console.log("plsease provide secrets in secrets/.secrets.json")
 }
 if (key_file.size == 0) {
-    console.log("plsease provide admin keys in config/admin_keys.json")
+    console.log("plsease provide admin keys in secrets/admin_keys.json")
     // let keys = {}
     // let keys =  RSA_generate()
     // Bun.write(key_file, JSON.stringify(keys))
@@ -59,7 +59,7 @@ const app = new Elysia()
         //     JSON.stringify(pass)
         // ).Ok
 
-        let enpass = encrypt(JSON.stringify(pass));
+        let enpass = (JSON.stringify(pass));
         console.log(enpass);
         let passb64 = utlis.gen_qrcode(enpass)
         // console.log(enpass)

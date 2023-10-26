@@ -2,7 +2,7 @@ import {describe, test, expect} from "bun:test";
 import * as db_connector from "../db_connector";
 import Database from "bun:sqlite";
 import * as types from "../types";
-import secrect from "../../config/secrets.json"
+import secrect from "../../secrets/secrets.json"
 
 var locurl = "localhost:3000"
 var produrl = ""

@@ -1,14 +1,4 @@
-FROM fedora
-
-RUN dnf update -y
-
-RUN dnf install -y  python3 unzip curl openssl gcc openssl-devel perl
-
-RUN curl -fsSL https://bun.sh/install | bash
-
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-
-ENV PATH="/root/.bun/bin:/root/.cargo/bin:${PATH}"
+FROM  oven/bun
 
 WORKDIR /app
 
@@ -16,15 +6,9 @@ COPY . .
 
 RUN bun install
 
-WORKDIR /app/src/encryption
-
-RUN cargo build
-
-WORKDIR /app
-
 RUN mkdir DB
 
-RUN mkdir config
+RUN mkdir secrets
 # RUN cp /app/src/encryption/target/debug/libencryption.so /app/
 
 EXPOSE 3000
