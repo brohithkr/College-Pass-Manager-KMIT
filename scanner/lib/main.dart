@@ -8,6 +8,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import 'ffi.dart';
 import './utlis.dart';
+import 'secrets.dart';
 
 late var timings;
 
@@ -18,10 +19,16 @@ void main() {
     {"year": 2, "opening_time": "12:15", "closing_time": "13:00"},
     {"year": 3, "opening_time": "12:15", "closing_time": "13:00"}
   ];
-  runApp(const MaterialApp(
+  runApp(MaterialApp(
     title: "Scanner",
     home: SafeArea(
-      child: MyApp(),
+      child: Scaffold(
+        body: MyApp(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: Icon(Icons.refresh),
+        ),
+      ),
     ),
     color: Colors.lightBlue,
     debugShowCheckedModeBanner: false,
@@ -38,14 +45,14 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _scanData = "--";
 
-  void scanQR() async {
+  void scanQR({bool islatecomers = false}) async {
     String scanRes;
     try {
       scanRes = await FlutterBarcodeScanner.scanBarcode(
         '#ff6666',
         'Cancel',
         true,
-        ScanMode.QR,
+        (islatecomers) ? ScanMode.BARCODE : ScanMode.QR,
       );
     } on PlatformException {
       scanRes = 'Failed to get platform version.';
@@ -77,12 +84,9 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (scanData == "--" || scanData == "-1") {
-      return Center(
-        child: ScanButton(
-          label: "Start Scanning",
-          toDo: toDo,
-        ),
-      );
+      return HomePage(toDo: toDo);
+    } else if(scanData.startsWith("22BD1A")) {
+      ;
     } else {
       var pass = (getDecryptedData(scanData));
       if (pass == null) {
@@ -91,7 +95,7 @@ class MainPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ValidityBox(isValid: false, msg: "Not a valid pass!".toString()),
-            ScanButton(label: "Scan", toDo: toDo),
+            MyButton(label: "Scan", toDo: toDo),
           ],
         );
       }
@@ -102,28 +106,56 @@ class MainPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ValidityBox(isValid: isValid, msg: year.toString()),
-          ScanButton(label: "Scan", toDo: toDo),
+          MyButton(label: "Scan", toDo: toDo),
         ],
       );
     }
   }
 }
 
-class ScanButton extends StatelessWidget {
-  final String label;
+class HomePage extends StatelessWidget {
+  const HomePage({
+    super.key,
+    required this.toDo,
+  });
+
   final Function() toDo;
-  const ScanButton({required this.label, required this.toDo, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        toDo();
-      },
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 20,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          MyButton(label: "Scan Passes", toDo: toDo),
+          MyButton(label: "Scan Latecomers", toDo: toDo)
+        ],
+      ),
+    );
+  }
+}
+
+class MyButton extends StatelessWidget {
+  final String label;
+  final Function() toDo;
+  const MyButton({required this.label, required this.toDo, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        onPressed: () {
+          toDo();
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 20,
+            ),
+          ),
         ),
       ),
     );
