@@ -66,7 +66,7 @@ const app = new Elysia()
             // ).Ok
 
             let enpass = (JSON.stringify(pass));
-            console.log(enpass);
+            // console.log(enpass);
             let passb64 = utlis.gen_qrcode(enpass)
             // console.log(enpass)
             db_connector.create(
@@ -197,19 +197,19 @@ const app = new Elysia()
     )
     .post(
         "/latecomers", ({ headers, set, body, db }) => {
-            console.log("here")
+            // console.log("here")
             if (headers.authorization != secrets.auth_token) {
                 set.status = 401;
                 return "Unauthorized";
             }
-            console.log("here")
+            // console.log("here")
             let res = db_connector.create(
                 db, "latecomers", {
                     roll_no: body.rollno,
                     date: Date.now()
                 }
             )
-            console.log("here")
+            // console.log("here")
             // set.status = 200
         },
         {

@@ -5,7 +5,8 @@ import * as types from "../types";
 import secret from "../../secrets/secrets.json"
 
 var locurl = "localhost:3000"
-var produrl = ""
+var produrl = "https://kmitpass-n8f7.onrender.com"
+locurl = produrl
 
 
 test(
@@ -93,7 +94,7 @@ describe(
         test(
             "get latecomers", async () => {
                 let res = fetch(`${locurl}/latecomers?from=25-10-23&to=30-10-23&ret_type=json`)
-                console.log(await (await res).json())
+                console.log(await (await res).text())
             }
         ),
         test(
