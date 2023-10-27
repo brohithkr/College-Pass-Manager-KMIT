@@ -7,24 +7,27 @@ import * as utlis from "./utlis";
 import { env } from 'process';
 
 var secrets = {
-    auth_token: process.env.AUTH
+    auth_token: process.env.AUTH_TOKEN
 }
-var secret_file = Bun.file("secrets/secrets.json")
-var key_file = Bun.file("secrets/admin_keys.json")
-if (secret_file.size == 0) {
-    console.log("plsease provide secrets in secrets/.secrets.json")
-}
-if (key_file.size == 0) {
-    console.log("plsease provide admin keys in secrets/admin_keys.json")
-    // let keys = {}
-    // let keys =  RSA_generate()
-    // Bun.write(key_file, JSON.stringify(keys))
-    // secrets = {
-    //     auth_token: (await secret_file.json()).auth_token,
-    //     ...keys
-    // }
-} else if (secrets.auth_token == undefined || secrets.auth_token == null) {
+// if(secrets.auth_token == undefined )
 
+if (secrets.auth_token == undefined || secrets.auth_token == null) {
+    var secret_file = Bun.file("secrets/secrets.json")
+    var key_file = Bun.file("secrets/admin_keys.json")
+    if (secret_file.size == 0) {
+        console.log("plsease provide secrets in secrets/.secrets.json")
+    }
+    if (key_file.size == 0) {
+        console.log("plsease provide admin keys in secrets/admin_keys.json")
+        // let keys = {}
+        // let keys =  RSA_generate()
+        // Bun.write(key_file, JSON.stringify(keys))
+        // secrets = {
+        //     auth_token: (await secret_file.json()).auth_token,
+        //     ...keys
+        // }
+    }
+    
     secrets = {
         auth_token: (await secret_file.json()).auth_token,
         // ...(await key_file.json())
