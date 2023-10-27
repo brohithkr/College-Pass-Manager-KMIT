@@ -24,7 +24,7 @@ if (key_file.size == 0) {
     //     ...keys
     // }
 } else if (secrets.auth_token == undefined || secrets.auth_token == null) {
-    
+
     secrets = {
         auth_token: (await secret_file.json()).auth_token,
         // ...(await key_file.json())
@@ -158,11 +158,12 @@ const app = new Elysia()
                 set.status = 401;
                 return "Unauthorized";
             }
+            var table_name = "Lunch_Timings"
             let req: any = body;
             for (let i in req) {
                 db_connector.update(
                     db,
-                    "Lunch_Timings",
+                    table_name,
                     "year",
                     (String(parseInt(i) + 1)),
                     {
@@ -192,6 +193,88 @@ const app = new Elysia()
         }
     )
     .post(
+        "/latecomers", ({ headers, set, body, db }) => {
+            console.log("here")
+            if (headers.authorization != secrets.auth_token) {
+                set.status = 401;
+                return "Unauthorized";
+            }
+            console.log("here")
+            let res = db_connector.create(
+                db, "latecomers", {
+                    roll_no: body.rollno,
+                    date: Date.now()
+                }
+            )
+            console.log("here")
+            // set.status = 200
+        },
+        {
+            body: t.Object({
+                rollno: t.String()
+            })
+        }
+    )
+    .get(
+        "/latecomers", ({ body, headers, query: {
+            ret_type, rollno, from, to
+        }, db }) => {
+        var res_lst: any[] = []
+
+        if ((from != undefined) && (to != undefined)) {
+            let fromlst = (from as string).split("-").map((i) => parseInt(i))
+            let tolst = (to as string).split("-").map((i) => parseInt(i))
+            var from_stamp = Date.UTC(fromlst[2], fromlst[1] - 1, fromlst[0])
+            var to_stamp = Date.UTC(tolst[2], tolst[1] - 1, tolst[0]) + 24 * (60 * 60) * 1000
+            if (rollno != undefined) {
+                let cmd = `SELECT roll_no,date FROM latecomers WHERE (roll_no = '${rollno}') AND (date BETWEEN ${from_stamp} AND ${to_stamp})`
+                let query = db.query(cmd)
+                res_lst = query.all()
+            }
+            else {
+                let query = db.query("SELECT * FROM latecomers WHERE date BETWEEN ? AND ?")
+                res_lst = query.all(from_stamp, to_stamp)
+            }
+        }
+        else if (rollno != undefined) {
+            res_lst = db_connector.read(
+                db,
+                "latecomers",
+                "roll_no",
+                rollno as string,
+                []
+            )
+        }
+
+        if (res_lst.length == 0) {
+            return "No passes were found."
+        }
+
+        if (ret_type == "json") {
+            return res_lst
+        }
+
+        if (ret_type == "csv") {
+            var retstr = String(Object.keys(res_lst[0]))
+            for (let i of res_lst) {
+                retstr += "\n" + String(Object.values(i))
+                    .replace(i.date.toString(), utlis.unix_to_ist_date(i.date))
+            }
+            return new Response(
+                retstr,
+                {
+                    headers: {
+                        "Content-Type": "text/csv",
+                        "Content-Disposition": `attachment; filename=latecomers_${Date.now()}.csv`
+                    }
+                }
+            )
+        }
+
+
+    }
+    )
+    .post(
         "/admin/*", ({ headers, set, request }) => {
             if (headers.authorization == secrets.auth_token) {
                 set.redirect = request.url
@@ -216,10 +299,10 @@ const app = new Elysia()
                 name: t.String(),
                 passwd: t.String()
             }),
-            response: t.Object({
-                "status": t.Boolean(),
-                "msg": t.String()
-            })
+            // response: t.Object({
+            //     "status": t.Boolean(),
+            //     "msg": t.String()
+            // })
         }
     )
     .post(

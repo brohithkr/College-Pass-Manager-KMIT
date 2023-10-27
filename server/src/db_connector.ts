@@ -27,6 +27,12 @@ export var schema: any = {
         opening_time varchar(7),
         closing_time varchar(7)
     )
+    `,
+    "latecomers": `
+    CREATE TABLE latecomers (
+        roll_no vachar(11),
+        date: integer
+    )
     `
 };
 
@@ -49,7 +55,7 @@ function connect(): Database{
     return new Database(db_path);
 }
 
-function create(db: Database, table: string, data: object): Result  {
+function create(db: Database, table: string, data: object)  {
     let quote_wrapper = (lst: string[]) => {
         var wrapped_str: string = "";
         for(let i=0;i<lst.length;i++){
@@ -83,7 +89,7 @@ function create(db: Database, table: string, data: object): Result  {
     //         db.run(cmd);
     //     }
     // }
-    // return res
+    return res
 }
 
 function read(

@@ -14,30 +14,30 @@ const get_ptr_and_len = (s: string): [number, number] => {
     return [p as number, b.length];
 }
 
-const {
-    symbols: {
-        add, rsa_generate, rsa_encrypt, rsa_decrypt
-    }
-} = dlopen (
-    path,{
-    add: {
-            args: [FFIType.i32, FFIType.i32],
-            returns: FFIType.cstring
-        },
-    rsa_generate: {
-        args: [],
-        returns: FFIType.cstring
-    },
-    rsa_encrypt: {
-            args: [FFIType.i64, FFIType.i32, FFIType.i64, FFIType.i32],
-            returns: FFIType.cstring
-        },
-    rsa_decrypt: {
-        args: [FFIType.i64, FFIType.i32, FFIType.i64, FFIType.i32],
-        returns: FFIType.cstring
-    },
-} 
-)
+// const {
+//     symbols: {
+//         add, rsa_generate, rsa_encrypt, rsa_decrypt
+//     }
+// } = dlopen (
+//     path,{
+//     add: {
+//             args: [FFIType.i32, FFIType.i32],
+//             returns: FFIType.cstring
+//         },
+//     rsa_generate: {
+//         args: [],
+//         returns: FFIType.cstring
+//     },
+//     rsa_encrypt: {
+//             args: [FFIType.i64, FFIType.i32, FFIType.i64, FFIType.i32],
+//             returns: FFIType.cstring
+//         },
+//     rsa_decrypt: {
+//         args: [FFIType.i64, FFIType.i32, FFIType.i64, FFIType.i32],
+//         returns: FFIType.cstring
+//     },
+// }
+// )
 
 export function RSA_generate(): Object {
     let res = rsa_generate().toString();
