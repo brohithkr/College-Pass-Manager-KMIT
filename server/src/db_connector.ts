@@ -31,7 +31,7 @@ export var schema: any = {
     "latecomers": `
     CREATE TABLE latecomers (
         roll_no vachar(11),
-        date: integer
+        date integer
     )
     `
 };
@@ -47,6 +47,7 @@ function initialize_db(table: string) {
             db.run(`INSERT INTO Lunch_Timings (year,opening_time,closing_time) VALUES ('3', '12:15', '13:00')`);
         }
     } catch(e) {
+        // console.log(e)
         console.log(`table ${table} already exists.`)
     }
 }

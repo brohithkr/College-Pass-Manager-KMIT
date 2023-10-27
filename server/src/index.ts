@@ -247,7 +247,7 @@ const app = new Elysia()
         }
 
         if (res_lst.length == 0) {
-            return "No passes were found."
+            return "No latecomers were found."
         }
 
         if (ret_type == "json") {
