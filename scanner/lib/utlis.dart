@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:typed_data';
+// import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
-import 'ffi.dart';
+// import 'ffi.dart';
 
 var hosturl = "http://localhost:3000";
 
@@ -28,7 +28,7 @@ dynamic getDecryptedData(String endata) {
   return res;
 }
 
-dynamic get_timings() async {
+dynamic getTimings() async {
   var res = await http.get(
     Uri.parse("$hosturl/get_timings"),
   );
@@ -65,6 +65,13 @@ bool isValidPass(dynamic pass, dynamic timings) {
   if (!(nowStamp > startStamp && nowStamp < endStamp)) {
     return false;
   }
+
+  return true;
+}
+
+
+
+bool remLatecomers(String rollno) {
 
   return true;
 }

@@ -27,7 +27,7 @@ if (secrets.auth_token == undefined || secrets.auth_token == null) {
         //     ...keys
         // }
     }
-    
+
     secrets = {
         auth_token: (await secret_file.json()).auth_token,
         // ...(await key_file.json())
@@ -203,19 +203,22 @@ const app = new Elysia()
                 return "Unauthorized";
             }
             // console.log("here")
-            let res = db_connector.create(
-                db, "latecomers", {
-                    roll_no: body.rollno,
-                    date: Date.now()
+            for (var i of body) {
+                let res = db_connector.create(
+                    db, "latecomers", {
+                    roll_no: i.rollno,
+                    date: i.date
                 }
-            )
+                )
+            }
             // console.log("here")
             // set.status = 200
         },
         {
-            body: t.Object({
-                rollno: t.String()
-            })
+            body: t.Array(t.Object({
+                rollno: t.String(),
+                date: t.Number()
+            }))
         }
     )
     .get(
