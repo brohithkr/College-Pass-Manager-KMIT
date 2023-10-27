@@ -2,7 +2,7 @@ import {describe, test, expect} from "bun:test";
 import * as db_connector from "../db_connector";
 import Database from "bun:sqlite";
 import * as types from "../types";
-import secrect from "../../secrets/secrets.json"
+import secret from "../../secrets/secrets.json"
 
 var locurl = "localhost:3000"
 var produrl = ""
@@ -26,7 +26,7 @@ describe(
                     {
                         method: "POST",
                         headers: {
-                            "authorization": secrect.auth_token,
+                            "authorization": secret.auth_token,
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({"rollno":"22BD1A0505","pass_type":"one_time"})
@@ -38,7 +38,7 @@ describe(
         test(
             "get issued passes", async () => {
                 let res = await fetch(
-                    `${locurl}/get_issued_passes?ret_type=json&rollno=22BD1A0505&from=01-10-2023&to=06-10-2023`,
+                    `${locurl}/latecomers?ret_type=json&rollno=22BD1A0505&from=01-10-2023&to=06-10-2023`,
                 )
                 console.log(await res.text())
             }
@@ -61,7 +61,7 @@ describe(
                     {
                         method: "POST",
                         headers: {
-                            "authorization": secrect.auth_token,
+                            "authorization": secret.auth_token,
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify([{"opening_time":"12:15","closing_time":"13:00"},
@@ -72,7 +72,30 @@ describe(
                 console.log(await res.text())
                 console.log(res.status)
             }
-        )
+        ),
+        test(
+            "rem latecomers", async () => {
+                let res = await fetch(
+                    `${locurl}/latecomers`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            "authorization": secret.auth_token,
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            rollno: "22BD1A0505",
+                        })
+                    }
+                )
+            }
+        ),
+        test(
+            "get latecomers", async () => {
+                let res = fetch(`${locurl}/latecomers?from=25-10-23&to=30-10-23&ret_type=json`)
+                console.log(await (await res).json())
+            }
+        ),
         test(
             "add verifier", async () => {
                 let ver: types.Verifier = {
@@ -84,7 +107,7 @@ describe(
                     `${locurl}/admin/register/verifier`, {
                         method: "POST",
                         headers: {
-                            "authorization": secrect.auth_token,
+                            "authorization": secret.auth_token,
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify(
