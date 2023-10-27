@@ -20,6 +20,7 @@ import sys
 
 from setlunchtime import *
 from gethistory import *
+from getlatecomers import *
 from srvrcfg import SERVERURL, headers
 
 BASE_DIR = None
@@ -135,6 +136,7 @@ class MainWin(QMainWindow):
         settingsMenu = QMenu(self)
         settingsMenu.addAction('Set Lunch time', self.setLunchTime)
         settingsMenu.addAction('Download History', self.dloadMonthHistory)
+        settingsMenu.addAction('Latecomers data', self.getLatecomersData)
 
         self.Tools.setMenu(settingsMenu)
         self.Tools.setDefaultAction(QAction(self))
@@ -154,6 +156,12 @@ class MainWin(QMainWindow):
     def dloadMonthHistory(self):
         self.status.setText("Downloading Pass History")
         dlg = GetHistoryDialog(self)
+        dlg.show()
+        self.status.setText("Waiting...")
+
+    def getLatecomersData(self):
+        self.status.setText("Downloading Latecomers data")
+        dlg = GetLatecomersDialog(self)
         dlg.show()
         self.status.setText("Waiting...")
 

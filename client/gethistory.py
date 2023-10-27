@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (
     QDialog, QDateEdit, QDialogButtonBox, QLayout,
     QLabel, QLineEdit, QCheckBox, QFormLayout
 )
-from PyQt5.QtGui import QKeyEvent, QCloseEvent
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtCore import pyqtSignal, Qt 
 
 from datetime import date
