@@ -5,19 +5,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:path/path.dart';
 
 import 'ffi.dart';
 import './utlis.dart';
-import 'secrets.dart';
+// import 'secrets.dart';
 import 'db_handling.dart';
 
 late var timings;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  var x = Latecomer(rollno: "22BD1A0505");
-  x.insertToDB();
-  Latecomer.postData();
+  // var x = Latecomer(rollno: "22BD1A0505");
+  // x.insertToDB();
+  // Latecomer.postData();
   // print(api.add(left: 1, right: 3));
   timings = [
     {"year": 1, "opening_time": "12:15", "closing_time": "13:00"},
@@ -27,17 +28,46 @@ void main() {
   runApp(MaterialApp(
     title: "Scanner",
     home: SafeArea(
-      child: Scaffold(
-        body: MyApp(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: Icon(Icons.refresh),
-        ),
-      ),
+      child: MyScaffold(),
     ),
     color: Colors.lightBlue,
     debugShowCheckedModeBanner: false,
   ));
+}
+
+class MyScaffold extends StatelessWidget {
+  const MyScaffold({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: MyApp(),
+      appBar: AppBar(
+        leading: Builder(
+          builder: (context) {
+            return BackButton(
+              onPressed: () {
+                Navigator.of(context)
+                .pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return MyScaffold();
+                    },
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.refresh),
+      ),
+    );
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -91,15 +121,25 @@ class MainPage extends StatelessWidget {
     if (scanData == "--" || scanData == "-1") {
       return HomePage(toDo: toDo);
     } else if (scanData.startsWith("22BD1A")) {
-      var res = remLatecomers(scanData);
+      var latecomer = Latecomer(rollno: scanData);
+      var res = latecomer.insertToDB();
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ValidityBox(
-            isValid: res,
-            msg: (res) ? "$scanData remembered" : "Some unknown error occured!",
-          ),
+          FutureBuilder(
+              future: res,
+              // initialData: ,
+
+              builder: (context, snap) {
+                var res = snap.data ?? true;
+                return ValidityBox(
+                  isValid: res,
+                  msg: (res)
+                      ? "$scanData remembered"
+                      : "Some unknown error occured!",
+                );
+              }),
           MyButton(label: "Scan", toDo: toDo),
         ],
       );

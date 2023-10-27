@@ -41,9 +41,16 @@ class Latecomer {
     return "$rollno on $date";
   }
 
-  Future<void> insertToDB() async {
-    var db = await openDB();
-    await db.insert("latecomers", toMap());
+  Future<bool> insertToDB() async {
+    try {
+      var db = await openDB();
+      await db.insert("latecomers", toMap());
+      var res = await db.query("latecomers");
+      print(res);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   // static Future<List<Latecomer>> latecomers() async {
