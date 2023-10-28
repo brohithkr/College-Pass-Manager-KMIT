@@ -203,7 +203,7 @@ const app = new Elysia()
                 return "Unauthorized";
             }
             // console.log("here")
-            for (var i of body) {
+            for (var i of body as any) {
                 let res = db_connector.create(
                     db, "latecomers", {
                     roll_no: i.rollno,
@@ -215,10 +215,10 @@ const app = new Elysia()
             // set.status = 200
         },
         {
-            body: t.Array(t.Object({
-                rollno: t.String(),
-                date: t.Number()
-            }))
+            // body: t.Array(t.Object({
+            //     rollno: t.String(),
+            //     date: t.Number()
+            // }))
         }
     )
     .get(
