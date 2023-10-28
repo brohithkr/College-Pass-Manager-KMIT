@@ -1,0 +1,37 @@
+name: Deploy App
+
+on: 
+  push:
+  workflow_dispatch:
+    inputs:
+      mode:
+        default: "full"
+
+jobs:
+
+  build:
+
+    runs-on: 'ubuntu-latest'
+    env:
+          USERNAME: ${{secrets.DOCKER_USERNAME}}
+          PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+    if: ${{contains(github.event.head_commit.message, '[deploy]') || (github.event.inputs.mode == 'full')}}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      # - run: cd server
+      - name: docker login
+        run: docker login -u $USERNAME -p $PASSWORD
+      - name: docker build
+        # - run: echo 'docker build . -t $USERNAME/mystique'
+        run: |
+          cd server
+          docker build . -t $USERNAME/mystique
+      - name: docker push
+        run: |
+          cd server
+          docker push $USERNAME/mystique
+      - name: trigger redeploy
+        run: curl ${{secrets.DEPLOY_HOOK}}
+      
+  

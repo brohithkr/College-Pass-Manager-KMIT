@@ -5,14 +5,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:path/path.dart';
 
 import 'ffi.dart';
 import './utlis.dart';
-import 'secrets.dart';
+// import 'secrets.dart';
+import 'db_handling.dart';
 
 late var timings;
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // var x = Latecomer(rollno: "22BD1A0505");
+  // x.insertToDB();
+  // Latecomer.postData();
   // print(api.add(left: 1, right: 3));
   timings = [
     {"year": 1, "opening_time": "12:15", "closing_time": "13:00"},
@@ -22,17 +28,46 @@ void main() {
   runApp(MaterialApp(
     title: "Scanner",
     home: SafeArea(
-      child: Scaffold(
-        body: MyApp(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: Icon(Icons.refresh),
-        ),
-      ),
+      child: MyScaffold(),
     ),
     color: Colors.lightBlue,
     debugShowCheckedModeBanner: false,
   ));
+}
+
+class MyScaffold extends StatelessWidget {
+  const MyScaffold({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: MyApp(),
+      appBar: AppBar(
+        leading: Builder(
+          builder: (context) {
+            return BackButton(
+              onPressed: () {
+                Navigator.of(context)
+                .pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return MyScaffold();
+                    },
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.refresh),
+      ),
+    );
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -45,14 +80,14 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _scanData = "--";
 
-  void scanQR({bool islatecomers = false}) async {
+  void scanQR({bool isLatecomers = false}) async {
     String scanRes;
     try {
       scanRes = await FlutterBarcodeScanner.scanBarcode(
         '#ff6666',
         'Cancel',
         true,
-        (islatecomers) ? ScanMode.BARCODE : ScanMode.QR,
+        (isLatecomers) ? ScanMode.BARCODE : ScanMode.QR,
       );
     } on PlatformException {
       scanRes = 'Failed to get platform version.';
@@ -78,15 +113,36 @@ class _MyAppState extends State<MyApp> {
 
 class MainPage extends StatelessWidget {
   final String scanData;
-  final Function() toDo;
+  final void Function({bool isLatecomers}) toDo;
   const MainPage({required this.scanData, required this.toDo, super.key});
 
   @override
   Widget build(BuildContext context) {
     if (scanData == "--" || scanData == "-1") {
       return HomePage(toDo: toDo);
-    } else if(scanData.startsWith("22BD1A")) {
-      ;
+    } else if (scanData.startsWith("22BD1A")) {
+      var latecomer = Latecomer(rollno: scanData);
+      var res = latecomer.insertToDB();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FutureBuilder(
+              future: res,
+              // initialData: ,
+
+              builder: (context, snap) {
+                var res = snap.data ?? true;
+                return ValidityBox(
+                  isValid: res,
+                  msg: (res)
+                      ? "$scanData remembered"
+                      : "Some unknown error occured!",
+                );
+              }),
+          MyButton(label: "Scan", toDo: toDo),
+        ],
+      );
     } else {
       var pass = (getDecryptedData(scanData));
       if (pass == null) {
@@ -94,7 +150,7 @@ class MainPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ValidityBox(isValid: false, msg: "Not a valid pass!".toString()),
+            ValidityBox(isValid: false, msg: "Not a valid pass".toString()),
             MyButton(label: "Scan", toDo: toDo),
           ],
         );
@@ -119,7 +175,7 @@ class HomePage extends StatelessWidget {
     required this.toDo,
   });
 
-  final Function() toDo;
+  final void Function({bool isLatecomers}) toDo;
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +193,7 @@ class HomePage extends StatelessWidget {
 
 class MyButton extends StatelessWidget {
   final String label;
-  final Function() toDo;
+  final void Function({bool isLatecomers}) toDo;
   const MyButton({required this.label, required this.toDo, super.key});
 
   @override
@@ -146,7 +202,11 @@ class MyButton extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
         onPressed: () {
-          toDo();
+          if (label == "Scan Latecomers") {
+            toDo(isLatecomers: true);
+          } else {
+            toDo();
+          }
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -180,7 +240,8 @@ class ValidityBox extends StatelessWidget {
             child: Text(
               (msg),
               style: TextStyle(
-                  fontSize: (msg.contains('!')) ? 20 : 40,
+                  // fontSize: (msg.contains('!')) ? 20 : 40,
+                  fontSize: 20,
                   color: (msg.contains('!')) ? Colors.red[900] : Colors.black),
             ),
           ),
