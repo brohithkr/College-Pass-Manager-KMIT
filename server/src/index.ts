@@ -205,20 +205,17 @@ const app = new Elysia()
             // console.log("here")
             for (var i of body as any) {
                 let res = db_connector.create(
-                    db, "latecomers", {
-                    roll_no: i.rollno,
-                    date: i.date
-                }
+                    db, "latecomers", i
                 )
             }
             // console.log("here")
             // set.status = 200
         },
         {
-            // body: t.Array(t.Object({
-            //     rollno: t.String(),
-            //     date: t.Number()
-            // }))
+            body: t.Array(t.Object({
+                roll_no: t.String(),
+                date: t.Number()
+            }))
         }
     )
     .get(
