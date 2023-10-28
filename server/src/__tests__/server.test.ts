@@ -6,14 +6,15 @@ import secret from "../../secrets/secrets.json"
 
 var locurl = "localhost:3000"
 var produrl = "https://kmitpass-n8f7.onrender.com"
-locurl = produrl
+// locurl = produrl
 
 
 test(
     "playground", async () => {
         var res = await fetch(
-            "http://localhost:3000/get_issued_passes?type=json",
+            `${locurl}/get_issued_passes?type=json`,
         )
+
 
     }
 )
@@ -39,7 +40,7 @@ describe(
         test(
             "get issued passes", async () => {
                 let res = await fetch(
-                    `${locurl}/latecomers?ret_type=json&rollno=22BD1A0505&from=01-10-2023&to=06-10-2023`,
+                    `${locurl}/latecomers?ret_type=json&rollno=22BD1A0505&from=25-10-2023&to=06-10-2023`,
                 )
                 console.log(await res.text())
             }
@@ -84,11 +85,14 @@ describe(
                             "authorization": secret.auth_token,
                             "Content-Type": "application/json",
                         },
-                        body: JSON.stringify({
-                            rollno: "22BD1A0505",
-                        })
+                        body: JSON.stringify([{
+                            roll_no: "22BD1A0505",
+                            date: Date.now()
+                        }])
                     }
                 )
+                // console.log
+                console.log(await (res.text()))
             }
         ),
         test(
