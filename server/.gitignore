@@ -177,3 +177,4 @@ target
 *.db
 *.so
 admin*
+**.fuse_hidden*
