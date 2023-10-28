@@ -11,6 +11,9 @@ import './utlis.dart';
 // import 'secrets.dart';
 import 'db_handling.dart';
 
+var cardinalToOrdinal =
+    Map<int, String>.from({1: "First", 2: "Second", 3: "Third", 4: "Fourth"});
+
 late var timings;
 
 void main() {
@@ -163,7 +166,7 @@ class MainPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ValidityBox(isValid: isValid, msg: year.toString()),
+          ValidityBox(isValid: isValid, msg: "${cardinalToOrdinal[year]} year"),
           MyButton(label: "Scan", toDo: toDo),
         ],
       );
@@ -243,6 +246,7 @@ class ValidityBox extends StatelessWidget {
               (msg),
               style: TextStyle(
                   // fontSize: (msg.contains('!')) ? 20 : 40,
+                  fontWeight: FontWeight.bold,
                   fontSize: 20,
                   color: (msg.contains('!')) ? Colors.red[900] : Colors.black),
             ),

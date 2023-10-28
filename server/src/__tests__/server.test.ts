@@ -6,7 +6,7 @@ import secret from "../../secrets/secrets.json"
 
 var locurl = "localhost:3000"
 var produrl = "https://kmitpass-n8f7.onrender.com"
-// locurl = produrl
+locurl = produrl
 
 
 test(
