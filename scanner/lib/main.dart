@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:path/path.dart';
 
 import 'ffi.dart';
 import './utlis.dart';
@@ -20,6 +19,7 @@ void main() {
   // x.insertToDB();
   // Latecomer.postData();
   // print(api.add(left: 1, right: 3));
+  // refreshTimings();
   timings = [
     {"year": 1, "opening_time": "12:15", "closing_time": "13:00"},
     {"year": 2, "opening_time": "12:15", "closing_time": "13:00"},
@@ -49,8 +49,7 @@ class MyScaffold extends StatelessWidget {
           builder: (context) {
             return BackButton(
               onPressed: () {
-                Navigator.of(context)
-                .pushReplacement(
+                Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) {
                       return MyScaffold();
@@ -63,7 +62,10 @@ class MyScaffold extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          refreshTimings();
+          Latecomer.postData();
+        },
         child: Icon(Icons.refresh),
       ),
     );

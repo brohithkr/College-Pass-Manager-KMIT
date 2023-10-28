@@ -84,11 +84,17 @@ class Latecomer {
   }
 }
 
+dynamic getTimings() async {
+  final db = await openDB();
+  var res = await db.query("Lunch_Timings");
+  return res;
+}
+
 void refreshTimings() async {
   var res = await http.get(Uri.parse('$hostUrl/get_timings'));
   var timings = jsonDecode(res.body);
   var db = await openDB();
   for (var i in timings) {
-    db.update("Lunch_Timings", i, where: 'year = ?', whereArgs: [i.year]);
+    db.update("Lunch_Timings", i, where: 'year = ?', whereArgs: [i['year']]);
   }
 }

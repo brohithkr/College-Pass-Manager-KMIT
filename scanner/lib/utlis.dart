@@ -1,10 +1,11 @@
 import 'dart:convert';
 // import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'secrets.dart';
 
 // import 'ffi.dart';
 
-var hosturl = "http://localhost:3000";
+// var hosturl = "http://localhost:3000";
 
 int rollToYear(String rollno) {
   var today = DateTime.now();
@@ -26,13 +27,6 @@ dynamic getDecryptedData(String endata) {
     return null;
   }
   return res;
-}
-
-dynamic getTimings() async {
-  var res = await http.get(
-    Uri.parse("$hosturl/get_timings"),
-  );
-  return jsonDecode(res.body);
 }
 
 bool isValidPass(dynamic pass, dynamic timings) {
@@ -69,13 +63,22 @@ bool isValidPass(dynamic pass, dynamic timings) {
   return true;
 }
 
-
-
-bool remLatecomers(String rollno) {
-
-  return true;
+void main() async {
+  String now = (DateTime.now().millisecondsSinceEpoch.toString());
+  var res = await http.post(
+    Uri.parse("$hostUrl/latecomers"),
+    headers: Map<String, String>.from(
+      {
+        "authorization": auth_token,
+      },
+    ),
+    body: jsonEncode(
+      [
+        {
+          "rollno": "22BD1A0505",
+        }
+      ],
+    ),
+  );
+  print(res.body);
 }
-
-// void main() async {
-
-// }
