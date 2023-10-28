@@ -26,7 +26,9 @@ jobs:
         # - run: echo 'docker build . -t $USERNAME/mystique'
         run: |
           cd server
-          docker build . -t $USERNAME/mystique
+          docker build --no-cache --file Dockerblank . -t $USERNAME/mystique
+          docker push $USERNAME/mystique
+          docker build --no-cache --file Dockerfile . -t $USERNAME/mystique
       - name: docker push
         run: |
           cd server
